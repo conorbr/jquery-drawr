@@ -1,13 +1,18 @@
 /*!
 * jquery.drawr.js
-* https://github.com/lieuweprins/jquery-drawr
-* Copyright (c) 2019 Lieuwe Prins
+* https://github.com/conorbr/jquery-drawr
+* Copyright (c) 2019 Conor Been
 * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
+
+updated fork of https://github.com/lieuweprins/jquery-drawr by Lieuwe Prins
 */
 
+import jQuery  from 'jquery'
+var $ = require('jquery');
+
 (function( $ ) {
- 
-    $.fn.drawr = function( action, param ) {
+
+  $.fn.drawr = function( action, param ) {
     	var plugin = this;
     	var tspImg="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH4wUIDDYyGYFdggAAAC5JREFUOMtjfPXqFQNuICoqikeWiYECMKp5ZGhm/P//Px7p169fjwbYqGZKNAMA5EEI4kUyPZcAAAAASUVORK5CYII=";
     	plugin.distance_between = function(p1, p2) {
@@ -38,8 +43,8 @@
 			} else {
 				var bounding_box = {
 					left: 0,
-					top: 0 
-				};			
+					top: 0
+				};
 			}
 			if(event.type=="touchmove" || event.type=="touchstart"){
 				var pressure = typeof event.originalEvent.touches[0].force!=="undefined" ? event.originalEvent.touches[0].force : 1;
@@ -62,7 +67,7 @@
 				grad.addColorStop(1, 'hsl('+hue+', 100%, '+(50-row/2)+'%)');
 				ctx.fillStyle=grad;
 				ctx.fillRect(0, row, 100, 1);
-			}	
+			}
 	    };
 		plugin.is_dragging = false;
 
@@ -136,8 +141,8 @@
 
  					if(stepSize<1) stepSize = 1;
 					for (var i = stepSize; i < dist; i+=stepSize) {//advance along the line between last spot and current spot using a^2 + b^2 = c^2 nonsense.
-					    x = lastSpot.x + (Math.sin(angle) * i);
-					    y = lastSpot.y + (Math.cos(angle) * i);
+					    var x = lastSpot.x + (Math.sin(angle) * i);
+					    var y = lastSpot.y + (Math.cos(angle) * i);
 						if(typeof self.active_brush.drawSpot!=="undefined") self.active_brush.drawSpot.call(self,self.active_brush,context,x,y,calculatedSize,calculatedAlpha,e);
 					    positions.push({x:x,y:y});
 					}
@@ -176,13 +181,13 @@
 					if(typeof result!=="undefined"){
 						plugin.record_undo_entry.call(self);
 		      		}
-	  
+
 				}
 				$(self).data("is_drawing",false).data("lastx",null).data("lasty",null);
 				$(".drawr-toolbox").data("dragging", false);
 				if(!plugin.is_dragging){
 					if(e.target.tagName!=="INPUT"){
-		    			e.preventDefault();
+              //do nothing
 		    		}
 	    		}
     			plugin.is_dragging=false;
@@ -276,7 +281,7 @@
 				this.width=width;
 				this.height=height;
 			}
-			
+
 			if(reset==true){
 				this.zoomFactor = 1;
 				if(typeof this.$zoomToolbox!=="undefined") this.$zoomToolbox.find("input").val(100).trigger("input");
@@ -290,7 +295,7 @@
     		});
 
 			this.pen_pressure = false;//switches mode once it detects.
-			
+
 			var context = this.getContext("2d", { alpha: this.settings.enable_tranparency });
 
     		if(this.settings.clear_on_init==true){
@@ -329,7 +334,7 @@
         	if(!$(this).hasClass("active-drawr")) return;//end drawing loop
         	var context = this.$memoryCanvas[0].getContext("2d");
         	context.clearRect(0,0,this.$memoryCanvas[0].width,this.$memoryCanvas[0].height);
- 
+
         	if(typeof this.effectCallback!=="undefined" && this.effectCallback!==null){
         		this.effectCallback.call(this,context,this.active_brush,this.scrollX,this.scrollY,this.zoomFactor);
         	}
@@ -344,22 +349,22 @@
 
 			//draw lines outlining canvas size
 
-			context.beginPath(); 
+			context.beginPath();
 			context.moveTo(0,-1-this.scrollY);
 			context.lineTo(this.width,-1-this.scrollY);
 			context.stroke();
 
-    		context.beginPath(); 
+    		context.beginPath();
 			context.moveTo(0,(this.height*this.zoomFactor)-this.scrollY);
 			context.lineTo(this.width,(this.height*this.zoomFactor)-this.scrollY);
 			context.stroke();
 
-			context.beginPath(); 
+			context.beginPath();
 			context.moveTo(-1-this.scrollX,0);
 			context.lineTo(-1-this.scrollX,this.height);
 			context.stroke();
 
-    		context.beginPath(); 
+    		context.beginPath();
 			context.moveTo((this.width*this.zoomFactor)-this.scrollX,0);
 			context.lineTo((this.width*this.zoomFactor)-this.scrollX,this.height);
 			context.stroke();
@@ -372,20 +377,20 @@
 				this.scrollTimer-=5;
 				context.lineWidth = 4;
 				context.lineCap = 'square';
-				context.beginPath(); 
+				context.beginPath();
 
 				//horizontal
 				var max_bar_width = container_width;
 				var visible_scroll_x = container_width;
 				if(this.scrollX<0) visible_scroll_x += this.scrollX;
 				if(this.scrollX> (this.width*this.zoomFactor)-container_width) visible_scroll_x -= this.scrollX-((this.width*this.zoomFactor)-container_width);
-				if(visible_scroll_x<0) visible_scroll_x = 0;	
+				if(visible_scroll_x<0) visible_scroll_x = 0;
 				var percentage = 100/this.width * visible_scroll_x;
 				var scroll_bar_width= max_bar_width / 100 * percentage;
 				scroll_bar_width/=this.zoomFactor;
 				if(scroll_bar_width<1) scroll_bar_width = 1;
 
-				var position_percentage = (100/((this.width*this.zoomFactor)-container_width))*this.scrollX;	
+				var position_percentage = (100/((this.width*this.zoomFactor)-container_width))*this.scrollX;
 				var posx=(((max_bar_width-scroll_bar_width)/100)*position_percentage);
 				if(posx<0) posx=0;
 				if(posx>container_width-scroll_bar_width) posx = container_width-scroll_bar_width;
@@ -399,13 +404,13 @@
 				var visible_scroll_y = container_height;
 				if(this.scrollY<0) visible_scroll_y += this.scrollY;
 				if(this.scrollY> (this.height*this.zoomFactor)-container_height) visible_scroll_y -= this.scrollY-((this.height*this.zoomFactor)-container_height);
-				if(visible_scroll_y<0) visible_scroll_y = 0;	
+				if(visible_scroll_y<0) visible_scroll_y = 0;
 				var percentage = 100/(this.height*this.zoomFactor) * visible_scroll_y;
 				var scroll_bar_height= max_bar_height / 100 * percentage;
 			//	scroll_bar_height/=this.zoomFactor;
 				if(scroll_bar_height<1) scroll_bar_height = 1;
 
-				var position_percentage = (100/((this.width*this.zoomFactor)-container_height))*this.scrollY;	
+				var position_percentage = (100/((this.width*this.zoomFactor)-container_height))*this.scrollY;
 				var posy=(((max_bar_height-scroll_bar_height)/100)*position_percentage);
 				if(posy<0) posy=0;
 				if(posy>container_height-scroll_bar_height) posy = container_height-scroll_bar_height;
@@ -441,6 +446,7 @@
 	    		plugin.is_dragging=true;
 	    		e.preventDefault();
 	    	});
+	    $(toolbox).css({'top' : '62px'})
 			return $(toolbox);
         };
 
@@ -468,7 +474,7 @@
 	        var currentCanvas = this.first()[0];
 	        var mime = typeof param=="undefined" ? "image/png" : param;
 	        return currentCanvas.toDataURL(mime);
-	    } 
+	    }
 
 	    if( action == "button" ){
 	    	var collection = $();
@@ -483,7 +489,7 @@
         //Initialize canvas or calling of methods
 		this.each(function() {
 
-			var currentCanvas = this;	
+			var currentCanvas = this;
 			if ( action === "start") {
 				if(!$(currentCanvas).hasClass("active-drawr")) {
                     console.error("The element you are running this command on is not a drawr canvas.");
@@ -492,7 +498,7 @@
 	            $(".drawr-toolbox").hide();
 	            $(".drawr-toolbox-brush").show();
 	            $(".drawr-toolbox-palette").show();
-				currentCanvas.$brushToolbox.find("button:first").mousedown();	            
+				currentCanvas.$brushToolbox.find("button:first").mousedown();
 	        } else if ( action === "stop" ) {
 	        	if(!$(currentCanvas).hasClass("active-drawr")) {
                     console.error("The element you are running this command on is not a drawr canvas.");
@@ -539,27 +545,27 @@
 				currentCanvas.$settingsToolbox.remove();
 				currentCanvas.$zoomToolbox.remove();
 
-				delete currentCanvas.$memoryCanvas;
-				delete currentCanvas.$brushToolbox;
-				delete currentCanvas.$settingsToolbox;
-				delete currentCanvas.$zoomToolbox;
+				 currentCanvas.$memoryCanvas;
+				 currentCanvas.$brushToolbox;
+				 currentCanvas.$settingsToolbox;
+				 currentCanvas.$zoomToolbox;
 
-				delete currentCanvas.plugin;
-				delete currentCanvas.settings;
-				delete currentCanvas.undoStack;
-				delete currentCanvas.brushColor;
-				delete currentCanvas.$undoButton;
-				delete currentCanvas.active_brush;
-				delete currentCanvas.zoomFactor;
-				delete currentCanvas.scrollX;
-				delete currentCanvas.scrollY;
-				delete currentCanvas.brushSize;
-				delete currentCanvas.brushAlpha;
-				delete currentCanvas.pen_pressure;
-				delete currentCanvas.drawStart;
-				delete currentCanvas.drawMove;
-				delete currentCanvas.drawStop;
-				delete scrollTimer;
+				 currentCanvas.plugin = null;
+				 currentCanvas.settings = null;
+				 currentCanvas.undoStack = null;
+				 currentCanvas.brushColor = null;
+				 currentCanvas.$undoButton = null;
+				 currentCanvas.active_brush = null;
+				 currentCanvas.zoomFactor = null;
+				 currentCanvas.scrollX = null;
+				 currentCanvas.scrollY = null;
+				 currentCanvas.brushSize = null;
+				 currentCanvas.brushAlpha = null;
+				 currentCanvas.pen_pressure = null;
+				 currentCanvas.drawStart = null;
+				 currentCanvas.drawMove = null;
+				 currentCanvas.drawStop = null;
+				 scrollTimer = null;
 
 				//reset css and visuals and scrolls
 
@@ -580,7 +586,7 @@
 	    		$(currentCanvas).removeClass("active-drawr");
 				$(currentCanvas).parent().removeClass("drawr-container");
 	        } else if ( typeof action == "object" || typeof action =="undefined" ){//not an action, but an init call
-	        	
+
 				if($(currentCanvas).hasClass("active-drawr")) return false;//prevent double init
 				currentCanvas.className = currentCanvas.className + " active-drawr";
 				$(currentCanvas).parent().addClass("drawr-container");
@@ -606,14 +612,14 @@
 	        	//set up canvas
         		plugin.initialize_canvas.call(currentCanvas,defaultSettings.canvas_width,defaultSettings.canvas_height,true);
         		currentCanvas.undoStack = [{data:currentCanvas.toDataURL("image/png"),current:true}];
-				var context = currentCanvas.getContext("2d", { alpha: defaultSettings.enable_tranparency });			
+				var context = currentCanvas.getContext("2d", { alpha: defaultSettings.enable_tranparency });
 				currentCanvas.brushColor = { r: 0, g: 0, b: 0 };
 				window.requestAnimationFrame(plugin.draw_animations.bind(currentCanvas));
 
 				//brush dialog
         		currentCanvas.$brushToolbox = plugin.create_toolbox.call(currentCanvas,"brush",{ left: $(currentCanvas).parent().offset().left, top: $(currentCanvas).parent().offset().top },"Brushes",80);
 
-        		$.fn.drawr.availableBrushes.sort(function(a,b) {return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);} ); 
+        		$.fn.drawr.availableBrushes.sort(function(a,b) {return (a.order > b.order) ? 1 : ((b.order > a.order) ? -1 : 0);} );
 
 				$.each($.fn.drawr.availableBrushes,function(i,brush){
 	    			plugin.create_button.call(currentCanvas,currentCanvas.$brushToolbox[0],"brush",brush);
@@ -624,7 +630,7 @@
 	    		});
 	    		plugin.create_button.call(currentCanvas,currentCanvas.$brushToolbox[0],"toggle",{"icon":"mdi mdi-magnify mdi-24px"}).on("touchstart.drawr mousedown.drawr",function(){
 	    			currentCanvas.$zoomToolbox.toggle();
-	    		});	    		
+	    		});
 	    		currentCanvas.$undoButton=plugin.create_button.call(currentCanvas,currentCanvas.$brushToolbox[0],"action",{"icon":"mdi mdi-undo-variant mdi-24px"}).on("touchstart.drawr mousedown.drawr",function(){
 				    if(currentCanvas.undoStack.length>0){
 						if(currentCanvas.undoStack[currentCanvas.undoStack.length-1].current==true){
@@ -651,7 +657,7 @@
 	    		});
 	    		currentCanvas.$undoButton.css("opacity",0.5);
 				//color dialog
-        		currentCanvas.$settingsToolbox = plugin.create_toolbox.call(currentCanvas,"settings",{ left: $(currentCanvas).parent().offset().left + $(currentCanvas).parent().innerWidth() - 80, top: $(currentCanvas).parent().offset().top },"Settings",80);
+        		currentCanvas.$settingsToolbox = plugin.create_toolbox.call(currentCanvas,"settings",{ left: 85, top: $(currentCanvas).parent().offset().top },"Settings",80);
 
         		if(currentCanvas.settings.color_mode=="presets"){
         			var colors = ["#FFFFFF","#0074D9","#2ECC40","#FFDC00","#FF4136","#111111"];
@@ -704,7 +710,7 @@
 			}
 		});
 		return this;
- 
+
     };
 
     /* Register a new brush */
@@ -714,7 +720,7 @@
     };
 
     //go to center? do dis: plugin.apply_scroll.call(currentCanvas,((currentCanvas.width*currentCanvas.zoomFactor)-$(currentCanvas).parent().width())/2,((currentCanvas.height*currentCanvas.zoomFactor)-$(currentCanvas).parent().height())/2,true);
- 
+
 }( jQuery ));
 
 /*!
@@ -725,14 +731,14 @@
 */
 
 (function( $ ) {
- 
+
     $.fn.drawrpalette = function( action, param ) {
-    
+
         var plugin = this;
-        
+
         plugin.offset = 5;
         plugin.pickerSize = 200;
-        
+
         plugin.get_mouse_value = function(event,$relativeTo){
             var mouse_data = {};
             if(event.type=="touchmove" || event.type=="touchstart"){
@@ -742,15 +748,15 @@
                 mouse_data.x = event.pageX-$relativeTo.offset().left - plugin.offset;
                 mouse_data.y = event.pageY-$relativeTo.offset().top - plugin.offset;
             }
-            
+
             return mouse_data;
         };
-               
+
         plugin.rgb_to_hex = function(r, g, b) {
             var rgb = b | (g << 8) | (r << 16);
             return '#' + (0x1000000 + rgb).toString(16).slice(1)
         };
-        
+
         plugin.hex_to_rgb = function (hex) {
 		    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		    return result ? {
@@ -759,7 +765,7 @@
 		        b: parseInt(result[3], 16)
 		    } : null;
 		};
-        
+
         plugin.hsv_to_rgb = function (h, s, v) {
             var r, g, b, i, f, p, q, t;
             if (arguments.length === 1) {
@@ -784,7 +790,7 @@
                 b: Math.round(b * 255)
             };
         }
-        
+
         plugin.rgb_to_hsv = function (r, g, b) {
             if (arguments.length === 1) {
                 g = r.g, b = r.b, r = r.r;
@@ -808,29 +814,30 @@
                 v: v
                 };
         }
-        
+
         plugin.hsv_to_xy = function(h,s,v){
             var x = s * plugin.pickerSize + plugin.offset;
             var y = (1 - v) * plugin.pickerSize + plugin.offset;
             return { 'x' : x, 'y' : y };
         };
-        
+
         plugin.xy_to_hsv = function(x,y){
             var s = x/plugin.pickerSize;
             var v = (plugin.pickerSize-y)/plugin.pickerSize;
             return { 's' : s, 'v' : v };
         };
-            	
+
 		plugin.draw_hsv = function(size,canvas){
-            var hsv = this.hsv;          
+            var hsv = this.hsv;
 			var ctx = canvas.getContext('2d');
             ctx.clearRect(0,0,canvas.width,canvas.height);
 
             //draw hsl color space
+      var row = 1;
 			for(row=0; row<size; row++){
-				var grad = ctx.createLinearGradient(0, 0, size,0);               
+				var grad = ctx.createLinearGradient(0, 0, size,0);
                 var value = (size-row)/size;
-                
+
                 var rgb = plugin.hsv_to_rgb(hsv.h,0,value);
                 grad.addColorStop(0, 'rgb('+rgb.r+', '+rgb.g+','+rgb.b+')');
                 var rgb = plugin.hsv_to_rgb(hsv.h,1,value);
@@ -838,33 +845,33 @@
 
 				ctx.fillStyle=grad;
 				ctx.fillRect(plugin.offset, row+plugin.offset, size, 1);
-			}	
+			}
             //draw hue
             for(row=0; row<size; row++){
                 ctx.fillStyle="hsl(" + ((360/size)*row) + ", 100%, 50%)";
                 ctx.fillRect(size+plugin.offset+5, row+plugin.offset, 40, 1);
-            }	
-            
+            }
+
             ctx.fillStyle = "black";
             ctx.fillRect(size+plugin.offset+3,plugin.offset+(hsv.h * size)-3,44,6);
             ctx.fillStyle = "white";
             ctx.fillRect(size+plugin.offset+5,plugin.offset+(hsv.h * size)-1,40,2);
-                        
+
             var pos = plugin.hsv_to_xy(this.hsv.h,this.hsv.s,this.hsv.v);
-            
+
             ctx.beginPath();
             ctx.lineWidth = 3;
             ctx.strokeStyle = "black";
             ctx.arc(pos.x, pos.y, 5, 0, 2 * Math.PI);
             ctx.stroke();
-            
+
             ctx.beginPath();
             ctx.lineWidth = 2;
             ctx.strokeStyle = "white";
             ctx.arc(pos.x, pos.y, 4, 0, 2 * Math.PI);
             ctx.stroke();
 	    };
-        
+
         plugin.update_color = function(){
             var hsv = this.hsv;
             var rgb = plugin.hsv_to_rgb(hsv.h,hsv.s,hsv.v);
@@ -877,7 +884,7 @@
             }*/
             plugin.draw_hsv.call(this,plugin.pickerSize,this.$dropdown.find("canvas")[0]);
         };
-        
+
         plugin.update_value = function(){
             var rgb = plugin.hsv_to_rgb(this.hsv.h,this.hsv.s,this.hsv.v);
             var hex = plugin.rgb_to_hex(rgb.r, rgb.g, rgb.b);
@@ -891,10 +898,10 @@
             plugin.update_color.call(this);
             $(this).trigger("cancel.drawrpalette",$(this).val());
         };
-	
+
 		this.each(function() {
 
-			var currentPicker = this;	
+			var currentPicker = this;
 			if ( action === "destroy") {
                 if(!$(currentPicker).hasClass("active-drawrpalette")) {
                     console.error("The element you are running this command on is not a drawrpalette.");
@@ -948,7 +955,7 @@
                     inlineStyles[styleProperty]=styleValue;
                 }
                 var inlineClasses = currentPicker.className!=="" ? currentPicker.className.split(" ") : [];
-	        	
+
 				if($(currentPicker).hasClass("active-drawrpalette")) return false;//prevent double init
 				currentPicker.className = currentPicker.className + " active-drawrpalette";
 
@@ -960,7 +967,7 @@
 	        	if(typeof action == "object") defaultSettings = Object.assign(defaultSettings, action);
 	        	currentPicker.settings = defaultSettings;
 				currentPicker.plugin = plugin;
-                
+
                 $(this).wrap("<div class='drawrpallete-wrapper'></div>");
                 this.$wrapper = $(this).parent();
                 this.$wrapper.css({"position":"relative","display":"inline-block"});
@@ -986,7 +993,7 @@
                     currentPicker.$button.addClass(className);
                 });
                 this.$wrapper.append(currentPicker.$button);
-                
+
                 var canvas_height = plugin.pickerSize+(plugin.offset*2);
                 var canvas_width = plugin.pickerSize+40+(plugin.offset*2)+5;
 				currentPicker.$dropdown=$("<div><canvas style='display:block;' class='drawrpallete-canvas' width=" + canvas_width + " height=" + canvas_height + " style='height:" + canvas_height + "px;width:" + canvas_width + "px;'></canvas></div>");
@@ -999,20 +1006,20 @@
                    "position" : "absolute",
                    "z-index" : 8
                 });
-                
+
                 currentPicker.$dropdown.find(".ok").css("color","black").on("mouseup.drawrpalette touchend.drawrpalette",function(){
                     plugin.update_value.call(currentPicker);
                     $(currentPicker).trigger("choose.drawrpalette",$(currentPicker).val());
                     currentPicker.$dropdown.hide();
                     $(currentPicker).trigger("close.drawrpalette");
                 });
-                
+
                 currentPicker.$dropdown.find(".cancel").css("color","black").on("mouseup.drawrpalette touchend.drawrpalette",function(){
                     plugin.cancel.call(currentPicker);
                     currentPicker.$dropdown.hide();
                     $(currentPicker).trigger("close.drawrpalette");
                 });
-                
+
                 currentPicker.$dropdown.on("mousedown.drawrpalette touchstart.drawrpalette",function(e){
                     var mouse_data = plugin.get_mouse_value(e,currentPicker.$dropdown);
                     if(mouse_data.x>0 && mouse_data.x<plugin.pickerSize && mouse_data.y>0 && mouse_data.y<plugin.pickerSize){
@@ -1037,7 +1044,7 @@
                     e.stopPropagation();
                 });
 				currentPicker.$dropdown.hide();
-               
+
                 currentPicker.$button.on("mousedown.drawrpalette touchstart.drawrpalette",function(e){
                     currentPicker.slidingHue=false;
                     currentPicker.slidingHsl=false;
@@ -1051,11 +1058,11 @@
                     currentPicker.$dropdown.show();
 
                     if(elementRight < viewportRight){//falls within viewport in normal mode
-                       // position normally     
+                       // position normally
                         currentPicker.$dropdown.offset({
                             "top" : currentPicker.$button.offset().top + currentPicker.$button.outerHeight(),
                             "left" : currentPicker.$button.offset().left
-                        });                 
+                        });
                     } else {
                         currentPicker.$dropdown.offset({
                            "top" : currentPicker.$button.offset().top + currentPicker.$button.outerHeight(),
@@ -1076,13 +1083,13 @@
                     if(currentPicker.$dropdown.is(":visible")){
                         plugin.cancel.call(currentPicker);
                         currentPicker.$dropdown.hide();
-                        $(currentPicker).trigger("close.drawrpalette");    
+                        $(currentPicker).trigger("close.drawrpalette");
                     }
                 };
                 $(window).bind("mousedown.drawrpalette touchstart.drawrpalette",currentPicker.paletteStart);
                 currentPicker.paletteMove = function(e){
                     var ctx = currentPicker.$dropdown.find("canvas")[0].getContext("2d");
-                    var mouse_data = plugin.get_mouse_value(e,currentPicker.$dropdown);                   
+                    var mouse_data = plugin.get_mouse_value(e,currentPicker.$dropdown);
                     if(mouse_data.y>plugin.pickerSize) mouse_data.y=plugin.pickerSize;
                     if(mouse_data.y<0) mouse_data.y=0;
                     if(mouse_data.x<0) mouse_data.x=0;
@@ -1125,7 +1132,7 @@
             }
 		});
 		return this;
- 
+
     };
 
 }( jQuery ));
@@ -1234,7 +1241,7 @@ jQuery.fn.drawr.register({
 	drawStart: function(brush,context,x,y,event){},
 	drawSpot: function(brush,context,x,y,pressure,event) {
 		var self = this;
-		var raw = context.getImageData(x, y, 1, 1).data; 
+		var raw = context.getImageData(x, y, 1, 1).data;
 		self.brushColor={ r: raw[0], g: raw[1], b: raw[2]};
 	}
 });
@@ -1309,7 +1316,7 @@ jQuery.fn.drawr.register({
 	},
 	drawStop: function(brush,context,x,y,size,alpha,event){
 		context.globalAlpha=alpha;
-		
+
 		brush.currentSize = size;
 		brush.currentAlpha = alpha;
 
@@ -1318,7 +1325,7 @@ jQuery.fn.drawr.register({
 		context.lineJoin = context.lineCap = "round";
 		context.strokeStyle = "rgb(" + this.brushColor.r + "," + this.brushColor.g + "," + this.brushColor.b + ")";
 
-		context.beginPath(); 
+		context.beginPath();
 		var positions = $(this).data("positions");
 		$.each(positions,function(i,position){
 			if(i>0){
@@ -1344,7 +1351,7 @@ jQuery.fn.drawr.register({
 		context.lineJoin = context.lineCap = "round";
 		context.strokeStyle = "rgb(" + this.brushColor.r + "," + this.brushColor.g + "," + this.brushColor.b + ")";
 
-		context.beginPath(); 
+		context.beginPath();
 		var positions = $(this).data("positions");
 		$.each(positions,function(i,position){
 			if(i>0){
@@ -1374,11 +1381,11 @@ jQuery.fn.drawr.register({
 		brush.dragStartY=null;brush.scrollStartY=null;
 
 		if(event.type=="touchmove" || event.type=="touchstart"){
-			x = event.originalEvent.touches[0].pageX;
-			Y = event.originalEvent.touches[0].pageY;
+			var x = event.originalEvent.touches[0].pageX;
+			var Y = event.originalEvent.touches[0].pageY;
 		} else {
-			x = event.pageX;
-			y = event.pageY;
+			var x = event.pageX;
+			var y = event.pageY;
 		}
 
 		brush.dragStartX=x;
@@ -1390,11 +1397,11 @@ jQuery.fn.drawr.register({
 		var self = this;
 
 		if(event.type=="touchmove" || event.type=="touchstart"){
-			x = event.originalEvent.touches[0].pageX;
-			Y = event.originalEvent.touches[0].pageY;
+			var x = event.originalEvent.touches[0].pageX;
+			var Y = event.originalEvent.touches[0].pageY;
 		} else {
-			x = event.pageX;
-			y = event.pageY;
+			var x = event.pageX;
+			var y = event.pageY;
 		}
 
 		var diffx = parseInt(-(x - brush.dragStartX));
@@ -1469,7 +1476,7 @@ jQuery.fn.drawr.register({
 		context.save();
 		context.translate(x,y);
 		var randomAngle = (Math.random()*360)+1;
-		context.rotate(randomAngle * Math.PI / 180); 
+		context.rotate(randomAngle * Math.PI / 180);
 		if(image.width>=image.height){
 			var imageHeight=image.height/(image.width/size);
 			var imageWidth=size;
@@ -1548,12 +1555,12 @@ jQuery.fn.drawr.register({
 	pressure_affects_alpha: false,
 	pressure_affects_size: false,
 	activate: function(brush,context){
-		
+
 	},
 	deactivate: function(brush,context){
 		if(typeof brush.$floatyBox!=="undefined"){
 			brush.$floatyBox.remove();
-			delete brush.$floatyBox;
+			brush.$floatyBox = null;
 		}
 	},
 	drawStart: function(brush,context,x,y,size,alpha,event){
@@ -1601,7 +1608,7 @@ jQuery.fn.drawr.register({
 	},
 	applyText: function(context,brush,x,y,text){
 		context.font = "20px sans-serif";
-		context.textAlign = "left"; 
+		context.textAlign = "left";
 		context.fillStyle = "rgb(" + this.brushColor.r + "," + this.brushColor.g + "," + this.brushColor.b + ")";
 		context.fillText(text, x-2, y+19);
 		this.plugin.record_undo_entry.call(this);
